@@ -1,28 +1,35 @@
 # Pi Capture
 
-Select text anywhere on macOS → keyboard shortcut → Pi explains it.
+Select text anywhere on macOS → ⌃⇧P → Pi explains it. Zero manual setup.
 
-## Setup
+## Install
 
-1. Copy the script:
-   ```bash
-   mkdir -p ~/.pi-capture
-   cp pi-capture.sh ~/.pi-capture/
-   chmod +x ~/.pi-capture/pi-capture.sh
-   ```
+```bash
+git clone <this-repo> ~/development/pi-capture
+cd ~/development/pi-capture
+./install.sh
+```
 
-2. Create Quick Action in **Shortcuts.app**:
-   - New shortcut → name: **"Send to Pi"**
-   - ℹ️ → Use as Quick Action → Services Menu → receives **Text** from **Any Application**
-   - Add: **Run Shell Script** (bash, Shortcut Input, to stdin)
-   - Script: `~/.pi-capture/pi-capture.sh`
+That's it. The installer:
+1. Copies the capture script to `~/.pi-capture/`
+2. Creates an Automator Quick Action in `~/Library/Services/`
+3. Assigns ⌃⇧P as the keyboard shortcut
 
-3. Assign shortcut in **System Settings → Keyboard → Keyboard Shortcuts → Services** → e.g. **⌃⇧P**
+Restart any open apps, then select text and press **⌃⇧P**.
 
 ## Usage
 
-Select text anywhere → press ⌃⇧P → Ghostty opens with Pi reading your text.
+Select text anywhere (browser, PDF, Teams, Notes, code editor) → press **⌃⇧P** → Ghostty/iTerm/Terminal opens with Pi reading your text.
 
 ## Customization
 
 Edit `~/.pi-capture/pi-capture.sh` directly. It's 13 lines.
+
+To change the keyboard shortcut, go to **System Settings → Keyboard → Keyboard Shortcuts → Services** → find "Send to Pi".
+
+## Uninstall
+
+```bash
+rm ~/.pi-capture/pi-capture.sh
+rm -r ~/Library/Services/Send\ to\ Pi.workflow
+```
