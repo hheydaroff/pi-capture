@@ -65,6 +65,36 @@ To change the keyboard shortcut: **System Settings → Keyboard → Keyboard Sho
 rm -rf ~/.pi-capture ~/Library/Services/Send\ to\ Pi.workflow
 ```
 
+## Security
+
+This project is 2 files. Here's exactly what they do:
+
+**`pi-capture.sh` (13 lines)** — the thing that runs when you press ⌃⇧Q:
+1. Reads the selected text from stdin
+2. Writes it to a temp file (`/tmp/pi-capture-XXXX.md`)
+3. Opens your terminal with `pi` reading that file
+
+That's it. No network calls, no data collection, no background processes.
+
+**`install.sh`** — run once to set up:
+1. Copies `pi-capture.sh` to `~/.pi-capture/`
+2. Creates an Automator workflow in `~/Library/Services/` (the XML looks scary — it's Apple's required format for registering a Service)
+3. Refreshes macOS services cache
+4. Writes a keyboard shortcut preference
+
+Nothing touches system files. No sudo. No admin. Everything lives in your home folder.
+
+**Verify yourself:**
+```bash
+./install.sh --dry-run     # Shows what it would do, changes nothing
+cat pi-capture.sh          # 13 lines, fully readable
+```
+
+**Uninstall removes everything:**
+```bash
+rm -rf ~/.pi-capture ~/Library/Services/Send\ to\ Pi.workflow
+```
+
 ## Requirements
 
 - macOS (tested on Sonoma/Sequoia)

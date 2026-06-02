@@ -1,21 +1,59 @@
 #!/bin/bash
 set -e
 
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  Pi Capture Installer                                               ║
+# ║                                                                      ║
+# ║  This script does exactly 4 things:                                  ║
+# ║  1. Copies pi-capture.sh to ~/.pi-capture/                           ║
+# ║  2. Creates an Automator workflow in ~/Library/Services/             ║
+# ║     (this is how macOS registers "Services" / Quick Actions)         ║
+# ║  3. Tells macOS to refresh its list of available Services            ║
+# ║  4. Assigns Control+Shift+Q as the keyboard shortcut                ║
+# ║                                                                      ║
+# ║  • No sudo. No admin privileges. No network access.                 ║
+# ║  • Only writes to YOUR home folder.                                  ║
+# ║  • The big XML blocks below are Automator boilerplate —             ║
+# ║    it's the format macOS requires. The actual logic is 5 lines.     ║
+# ║                                                                      ║
+# ║  Run with --dry-run to see what it would do without doing it.       ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
 WORKFLOW_NAME="Send to Pi"
 WORKFLOW_DIR="$HOME/Library/Services/${WORKFLOW_NAME}.workflow"
 SCRIPT_DIR="$HOME/.pi-capture"
-SHORTCUT_KEY='^$q'  # Control+Shift+Q
+SHORTCUT_KEY='^$q'  # ^ = Control, $ = Shift, q = Q
+
+# --- Dry run mode ---
+if [[ "$1" == "--dry-run" ]]; then
+    echo "DRY RUN — nothing will be changed."
+    echo ""
+    echo "Would do:"
+    echo "  1. Copy pi-capture.sh → $SCRIPT_DIR/pi-capture.sh"
+    echo "  2. Create workflow   → $WORKFLOW_DIR/"
+    echo "     (registers 'Send to Pi' in macOS Services menu)"
+    echo "  3. Flush services cache (pbs -flush)"
+    echo "  4. Set shortcut ⌃⇧Q → defaults write pbs NSServicesStatus"
+    echo ""
+    echo "All files go in your home folder. No sudo needed."
+    exit 0
+fi
 
 echo "=== Pi Capture Installer ==="
 
-# 1. Install the capture script
+# ── Step 1: Copy the 13-line capture script ──────────────────────────
 mkdir -p "$SCRIPT_DIR"
 SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
 cp "$SELF_DIR/pi-capture.sh" "$SCRIPT_DIR/pi-capture.sh"
 chmod +x "$SCRIPT_DIR/pi-capture.sh"
-echo "✓ Script installed"
+echo "✓ Script installed → $SCRIPT_DIR/pi-capture.sh"
 
-# 2. Create Automator Quick Action (receives text from any app)
+# ── Step 2: Create Automator Quick Action ────────────────────────────
+# This is an Automator ".workflow" bundle. macOS requires this XML format
+# to register a Service that receives text. The meaningful part is:
+#   - Info.plist: "I accept text from any app"
+#   - document.wflow: "Run this shell script with the text on stdin"
+# Everything else is required boilerplate.
 mkdir -p "$WORKFLOW_DIR/Contents"
 
 cat > "$WORKFLOW_DIR/Contents/Info.plist" << 'PLIST'
@@ -232,13 +270,13 @@ cat > "$WORKFLOW_DIR/Contents/document.wflow" << WFLOW
 </plist>
 WFLOW
 
-echo "✓ Quick Action created"
+echo "✓ Quick Action created → $WORKFLOW_DIR/"
 
-# 3. Flush services cache
+# ── Step 3: Tell macOS to re-read the Services list ──────────────────
 /System/Library/CoreServices/pbs -flush 2>/dev/null || true
 echo "✓ Services cache flushed"
 
-# 4. Assign keyboard shortcut (⌃⇧Q)
+# ── Step 4: Assign keyboard shortcut (⌃⇧Q) ──────────────────────────
 /usr/libexec/PlistBuddy -c "Delete :NSServicesStatus:\"(null) - ${WORKFLOW_NAME} - runWorkflowAsService\"" ~/Library/Preferences/pbs.plist 2>/dev/null || true
 defaults write pbs NSServicesStatus -dict-add "\"(null) - ${WORKFLOW_NAME} - runWorkflowAsService\"" "{key_equivalent = \"${SHORTCUT_KEY}\";}"
 echo "✓ Keyboard shortcut assigned: ⌃⇧Q"
