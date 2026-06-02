@@ -20,6 +20,14 @@ The installer automatically:
 
 Restart any open apps, then select text and press **⌃⇧Q**.
 
+## Try It
+
+Select the text below, then press **⌃⇧Q**:
+
+> The Zettelkasten method is a personal knowledge management system invented by German sociologist Niklas Luhmann. He used it to write over 70 books and 400 scholarly articles. The core idea is that notes should be atomic (one idea per note), linked to each other, and written in your own words. This forces you to think about how ideas connect rather than just collecting information passively.
+
+If a terminal opened with Pi explaining Zettelkasten to you — it works.
+
 ## Usage
 
 Select text anywhere → press **⌃⇧Q** → your terminal opens with an interactive Pi session, text loaded as context.
