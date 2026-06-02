@@ -23,5 +23,11 @@ exec pi @"${CAPTURE_FILE}" "I selected this text. Read it, explain it to me and 
 LAUNCH
 chmod +x "$LAUNCHER"
 
-# Open in Ghostty
-open -a Ghostty "$LAUNCHER"
+# Open in preferred terminal (Ghostty → iTerm → Terminal.app fallback)
+if open -Ra "Ghostty" 2>/dev/null; then
+  open -a Ghostty "$LAUNCHER"
+elif open -Ra "iTerm" 2>/dev/null; then
+  open -a iTerm "$LAUNCHER"
+else
+  open "$LAUNCHER"
+fi
