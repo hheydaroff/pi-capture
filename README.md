@@ -1,6 +1,6 @@
 # Pi Capture
 
-Select text anywhere on macOS → ⌃⇧P → Pi explains it. Zero manual setup.
+Select text anywhere on macOS → ⌃⇧Q → Pi explains it. Zero manual setup.
 
 ## Install
 
@@ -13,13 +13,13 @@ cd ~/development/pi-capture
 That's it. The installer:
 1. Copies the capture script to `~/.pi-capture/`
 2. Creates an Automator Quick Action in `~/Library/Services/`
-3. Assigns ⌃⇧P as the keyboard shortcut
+3. Assigns ⌃⇧Q as the keyboard shortcut
 
-Restart any open apps, then select text and press **⌃⇧P**.
+Restart any open apps, then select text and press **⌃⇧Q**.
 
 ## Usage
 
-Select text anywhere (browser, PDF, Teams, Notes, code editor) → press **⌃⇧P** → Ghostty/iTerm/Terminal opens with Pi reading your text.
+Select text anywhere (browser, PDF, Teams, Notes, code editor) → press **⌃⇧Q** → Ghostty/iTerm/Terminal opens with Pi reading your text.
 
 ## Customization
 

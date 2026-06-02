@@ -4,7 +4,7 @@ set -e
 WORKFLOW_NAME="Send to Pi"
 WORKFLOW_DIR="$HOME/Library/Services/${WORKFLOW_NAME}.workflow"
 SCRIPT_DIR="$HOME/.pi-capture"
-SHORTCUT_KEY='^$p'  # Control+Shift+P
+SHORTCUT_KEY='^$q'  # Control+Shift+Q
 
 echo "=== Pi Capture Installer ==="
 
@@ -238,11 +238,11 @@ echo "✓ Quick Action created"
 /System/Library/CoreServices/pbs -flush 2>/dev/null || true
 echo "✓ Services cache flushed"
 
-# 4. Assign keyboard shortcut (⌃⇧P)
+# 4. Assign keyboard shortcut (⌃⇧Q)
 /usr/libexec/PlistBuddy -c "Delete :NSServicesStatus:\"(null) - ${WORKFLOW_NAME} - runWorkflowAsService\"" ~/Library/Preferences/pbs.plist 2>/dev/null || true
 defaults write pbs NSServicesStatus -dict-add "\"(null) - ${WORKFLOW_NAME} - runWorkflowAsService\"" "{key_equivalent = \"${SHORTCUT_KEY}\";}"
-echo "✓ Keyboard shortcut assigned: ⌃⇧P"
+echo "✓ Keyboard shortcut assigned: ⌃⇧Q"
 
 echo ""
-echo "=== Done! Select text anywhere → ⌃⇧P → Pi opens ==="
+echo "=== Done! Select text anywhere → ⌃⇧Q → Pi opens ==="
 echo "(Restart apps if the shortcut doesn't work immediately)"
