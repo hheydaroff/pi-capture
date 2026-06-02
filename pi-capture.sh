@@ -14,7 +14,7 @@ fi
 CAPTURE_FILE="/tmp/pi-capture-$$.md"
 printf '%s' "$TEXT" > "$CAPTURE_FILE"
 
-# Write a .command file (macOS opens these in Terminal.app automatically)
+# Write a .command file
 LAUNCHER="/tmp/pi-capture-$$.command"
 cat > "$LAUNCHER" << LAUNCH
 #!/bin/bash
@@ -23,5 +23,5 @@ exec pi @"${CAPTURE_FILE}" "I selected this text. Read it, explain it to me and 
 LAUNCH
 chmod +x "$LAUNCHER"
 
-# Just open it — macOS handles the rest
-open "$LAUNCHER"
+# Open in Ghostty
+open -a Ghostty "$LAUNCHER"
