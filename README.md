@@ -1,35 +1,63 @@
 # Pi Capture
 
-Select text anywhere on macOS → ⌃⇧Q → Pi explains it. Zero manual setup.
+Select text anywhere on macOS → **⌃⇧Q** → Pi explains it.
+
+One script, one installer, zero manual setup. No sudo required.
 
 ## Install
 
 ```bash
-git clone <this-repo> ~/development/pi-capture
-cd ~/development/pi-capture
+git clone https://github.com/yourusername/pi-capture.git
+cd pi-capture
 ./install.sh
 ```
 
-That's it. The installer:
-1. Copies the capture script to `~/.pi-capture/`
+The installer automatically:
+1. Deploys the capture script to `~/.pi-capture/`
 2. Creates an Automator Quick Action in `~/Library/Services/`
-3. Assigns ⌃⇧Q as the keyboard shortcut
+3. Assigns **⌃⇧Q** as the system-wide keyboard shortcut
+4. Flushes the services cache
 
 Restart any open apps, then select text and press **⌃⇧Q**.
 
 ## Usage
 
-Select text anywhere (browser, PDF, Teams, Notes, code editor) → press **⌃⇧Q** → Ghostty/iTerm/Terminal opens with Pi reading your text.
+Select text anywhere → press **⌃⇧Q** → your terminal opens with an interactive Pi session, text loaded as context.
+
+Works in browsers, PDFs, messaging apps, code editors, Notes, Mail — anything with selectable text.
+
+## How It Works
+
+```
+⌃⇧Q triggers macOS Service → selected text piped to pi-capture.sh → opens terminal with:
+pi @captured-text.md "I selected this text. Read it, explain it to me and help me with whatever I ask next."
+```
+
+Terminal preference: Ghostty > iTerm > Terminal.app (auto-detected).
+
+## Compatibility
+
+| Works | Doesn't work |
+|-------|-------------|
+| Safari, Chrome, Firefox, Arc | Text inside images (no OCR) |
+| VS Code, Xcode, any editor | Password/secure text fields |
+| Preview, PDF Expert | Some sandboxed apps |
+| Teams, Slack, iMessage, Mail | |
+| Notes, Pages, any text field | |
 
 ## Customization
 
-Edit `~/.pi-capture/pi-capture.sh` directly. It's 13 lines.
+Edit `~/.pi-capture/pi-capture.sh` — it's 13 lines.
 
-To change the keyboard shortcut, go to **System Settings → Keyboard → Keyboard Shortcuts → Services** → find "Send to Pi".
+To change the keyboard shortcut: **System Settings → Keyboard → Keyboard Shortcuts → Services** → "Send to Pi".
 
 ## Uninstall
 
 ```bash
-rm ~/.pi-capture/pi-capture.sh
-rm -r ~/Library/Services/Send\ to\ Pi.workflow
+rm -rf ~/.pi-capture ~/Library/Services/Send\ to\ Pi.workflow
 ```
+
+## Requirements
+
+- macOS (tested on Sonoma/Sequoia)
+- [Pi](https://github.com/earendil-works/pi-coding-agent) installed and on PATH
