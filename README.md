@@ -16,58 +16,57 @@ Works in: browsers, PDFs, Teams, Apple Notes, emails, code editors — anywhere 
 ./install.sh
 ```
 
-This copies the capture script to `~/.pi-capture/` and prints setup instructions.
+Deploys engine + adapters to `~/.pi-capture/`. Safe to re-run after `git pull` — upgrades the engine without touching your config.
 
 ## Setup (one-time)
 
 ### 1. Create the Quick Action in Shortcuts.app
 
-1. Open **Shortcuts.app**
-2. Click **+** → name it **"Send to Pi"**
-3. Click **ℹ️** (top toolbar) → check **Use as Quick Action** → enable **Services Menu**
-4. Set "receives" → **Text** → from **Any Application**
-5. Add action: **Run Shell Script**
+1. Open **Shortcuts.app** → **+** → name it **"Send to Pi"**
+2. Click **ℹ️** → **Use as Quick Action** → enable **Services Menu**
+3. Set "receives" → **Text** → from **Any Application**
+4. Add action: **Run Shell Script**
    - Shell: `/bin/bash`
    - Input: `Shortcut Input`
    - Pass Input: `to stdin`
-   - Script body:
-     ```bash
-     ~/.pi-capture/pi-capture.sh
-     ```
+   - Script: `~/.pi-capture/pi-capture.sh`
 
 ### 2. Assign a Keyboard Shortcut
 
 1. **System Settings → Keyboard → Keyboard Shortcuts → Services**
-2. Find **"Send to Pi"** under the Text section
-3. Click "none" and press your shortcut (e.g., **⌃⇧P**)
+2. Find **"Send to Pi"** → assign shortcut (e.g., **⌃⇧P**)
 
-## Usage
+## Configuration
 
-1. Select any text (browser, PDF, Teams, Notes, anywhere)
-2. Press your shortcut (e.g., ⌃⇧P)
-3. A Terminal window opens with Pi reading your selected text
-4. Pi explains the text and waits for your follow-up questions
-5. Full interactive session — ask as many follow-ups as you want
+Edit `~/.pi-capture/config.sh`:
 
-## How It Works (Technical)
+```bash
+# Prompt sent to pi with your selected text
+PI_CAPTURE_PROMPT="I selected this text. Read it, explain it to me and help me with whatever I ask next."
 
-1. macOS Quick Action captures selected text via the Services menu
-2. Text is piped to `pi-capture.sh` via stdin
-3. Script saves text to a temp file (`/tmp/pi-capture-<pid>.md`)
-4. Creates a `.command` launcher file
-5. `open` runs it — macOS opens a new Terminal window
-6. Pi starts with `@file` (attaches the text) + initial prompt
+# Terminal: auto | ghostty | iterm | terminal
+PI_CAPTURE_TERMINAL="auto"
 
-## Customization
+# Extra pi flags (e.g., "--model anthropic/claude-sonnet-4" or "--thinking high")
+PI_CAPTURE_FLAGS=""
+```
 
-Edit `~/.pi-capture/pi-capture.sh` to change:
-- The initial prompt Pi receives
-- Terminal behavior (add `--model`, `--thinking`, etc.)
+Config is never overwritten by the installer — your customizations survive upgrades.
 
-### Use iTerm instead of Terminal.app
+## Architecture
 
-Right-click any `.command` file → Get Info → Open With → iTerm → Change All
+```
+~/.pi-capture/
+├── config.sh        # Your preferences (prompt, terminal, pi flags)
+├── pi-capture.sh    # Engine: stdin text → builds launcher → picks adapter
+└── adapters/
+    ├── ghostty.sh   # Opens Ghostty with the pi command
+    ├── iterm.sh     # Opens iTerm
+    └── terminal.sh  # Opens Terminal.app (fallback)
+```
+
+**Adding a terminal:** Create `adapters/myterminal.sh` with a `launch()` function, then set `PI_CAPTURE_TERMINAL="myterminal"` in config.
 
 ## Uninstall
 
-Remove `~/.pi-capture/pi-capture.sh`, then delete the "Send to Pi" shortcut in Shortcuts.app and remove the keyboard shortcut from System Settings.
+Remove `~/.pi-capture/` directory, delete the "Send to Pi" shortcut, and remove the keyboard shortcut from System Settings.
