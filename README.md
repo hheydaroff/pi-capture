@@ -7,7 +7,7 @@ One script, one installer, zero manual setup. No sudo required.
 ## Install
 
 ```bash
-git clone https://github.com/yourusername/pi-capture.git
+git clone https://github.com/hheydaroff/pi-capture.git
 cd pi-capture
 ./install.sh
 ```
